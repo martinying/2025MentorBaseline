@@ -4,22 +4,65 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
 
+  private BuiltInAccelerometer accelerometer = new BuiltInAccelerometer();
+
   public Robot() {
+    this.advKitInit();
     m_robotContainer = new RobotContainer();
+  }
+
+  private void advKitInit() {
+    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+
+    if (isReal()) {
+        Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+        Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        //new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+    } else {
+        if(isSimulation()) {
+          Logger.addDataReceiver(new NT4Publisher());
+        } else { //REPLAY
+          setUseTiming(false); // Run as fast as possible
+          String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+          Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+          Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log  
+        }
+    }
+
+    Logger.start();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    this.logBuildInAccelerometer();
+
+  }
+
+  private void logBuildInAccelerometer() {
+    SmartDashboard.putNumber("accelerometer/x", accelerometer.getX());
+    SmartDashboard.putNumber("accelerometer/y", accelerometer.getY());
+    SmartDashboard.putNumber("accelerometer/z", accelerometer.getZ());
+
   }
 
   @Override
