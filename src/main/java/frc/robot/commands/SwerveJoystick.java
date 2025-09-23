@@ -36,7 +36,7 @@ public class SwerveJoystick extends Command {
         turningSpeed = turningSpeed*DriveConstants.MAX_SPEED_METER_PER_SECCONDS_DEFAULT_VALUE;
 
         //IN TELEOP WE WANT FIELD RELATIVE
-        // ChassisSpeeds chassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveDrive.getMeasuredAngle());
-        // swerveDrive.driveRobot(chassisSpeed, null);
+        ChassisSpeeds chassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveDrive.getMeasuredAngle());
+        swerveDrive.driveRobot(chassisSpeed);
     }
 }
