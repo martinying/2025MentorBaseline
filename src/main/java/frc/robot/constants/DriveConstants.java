@@ -20,11 +20,21 @@ public class DriveConstants {
     );
 
     public static final int FRONT_LEFT_MODULE_INDEX = 0;
-
     public static final int FRONT_RIGHT_MODULE_INDEX = 1;
-
     public static final int BACK_LEFT_MODULE_INDEX = 2;
-
     public static final int BACK_RIGHT_MODULE_INDEX = 3;
 
+    public static final int FRONT_RIGHT_KRAKEN_ID = 4;
+    public static final int FRONT_RIGHT_FALCON_ID = 14;
+    public static final int FRONT_LEFT_KRAKEN_ID = 1;
+    public static final int FRONT_LEFT_FALCON_ID = 11;
+    public static final int BACK_RIGHT_KRAKEN_ID = 3;
+    public static final int BACK_RIGHT_FALCON_ID = 13;
+    public static final int BACK_LEFT_KRAKEN_ID = 2;
+    public static final int BACK_LEFT_FALCON_ID = 12;
+
+    public static final int FRONT_RIGHT_ENCODER_ID = 3;
+    public static final int FRONT_LEFT_ENCODER_ID = 2;
+    public static final int BACK_RIGHT_ENCODER_ID = 4;
+    public static final int BACK_LEFT_ENCODER_ID = 0;
 }

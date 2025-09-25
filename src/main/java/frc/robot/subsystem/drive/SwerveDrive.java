@@ -17,10 +17,10 @@ public class SwerveDrive extends SubsystemBase {
     private SwerveModule[] swerveModules = new SwerveModule[4];
 
     public SwerveDrive() {
-        swerveModules[DriveConstants.FRONT_LEFT_MODULE_INDEX] = new SwerveModule(1,11,2);
-        swerveModules[DriveConstants.FRONT_RIGHT_MODULE_INDEX] = new SwerveModule(4,14,3);
-        swerveModules[DriveConstants.BACK_LEFT_MODULE_INDEX] = new SwerveModule(2,12,0);
-        swerveModules[DriveConstants.BACK_RIGHT_MODULE_INDEX] = new SwerveModule(3,13,4);
+        swerveModules[DriveConstants.FRONT_LEFT_MODULE_INDEX] = new SwerveModule(DriveConstants.FRONT_LEFT_KRAKEN_ID,DriveConstants.FRONT_LEFT_FALCON_ID,DriveConstants.FRONT_LEFT_ENCODER_ID);
+        swerveModules[DriveConstants.FRONT_RIGHT_MODULE_INDEX] = new SwerveModule(DriveConstants.FRONT_RIGHT_KRAKEN_ID,DriveConstants.FRONT_RIGHT_FALCON_ID,DriveConstants.FRONT_RIGHT_ENCODER_ID);
+        swerveModules[DriveConstants.BACK_LEFT_MODULE_INDEX] = new SwerveModule(DriveConstants.BACK_LEFT_KRAKEN_ID,DriveConstants.BACK_LEFT_FALCON_ID,DriveConstants.BACK_LEFT_ENCODER_ID);
+        swerveModules[DriveConstants.BACK_RIGHT_MODULE_INDEX] = new SwerveModule(DriveConstants.BACK_RIGHT_KRAKEN_ID,DriveConstants.BACK_RIGHT_FALCON_ID,DriveConstants.BACK_RIGHT_ENCODER_ID);
     }
     
     @AutoLogOutput(key = "SwerveDrive/measuredAngle")
