@@ -1,6 +1,7 @@
 package frc.robot.subsystem;
 
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -91,8 +92,14 @@ public class SwerveModule {
         double desiredSpeedOfTheWheelInAngularVelocity = desiredSwerveModuleStates.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS_DEFAULT_VALUE;
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
 
+        Logger.recordOutput("SwerveModule/desiredSpeedOfTheWheelInAngularVelocity",desiredSpeedOfTheWheelInAngularVelocity);
+        Logger.recordOutput("SwerveModuel/desiredAngleOfTheWheel", desiredAngleOfTheWheel);
+
         turnMotorController.setControl(turnPositionInput.withPosition(desiredAngleOfTheWheel.getRotations()));//expect rotations
         driveMotorController.setControl(driveVelocityInput.withVelocity(Units.radiansToRotations(desiredSpeedOfTheWheelInAngularVelocity)));//expect rotations per second
+
+        Logger.recordOutput("SwerveModule/driveMCFaultField", driveMotorController.getFaultField().getValue());
+        Logger.recordOutput("SwerveModule/turnMCFaultField", turnMotorController.getFaultField().getValue());
      }
 
     public void updateInputs() {
