@@ -22,9 +22,11 @@ public class SwerveJoystick extends Command {
 
     @Override
     public void execute() {
-        double xSpeed = joystick.getLeftX();
-        double ySpeed = joystick.getLeftY();
-        double turningSpeed = joystick.getRightX();
+        double xSpeed = joystick.getLeftY() * -1;//Y matches sim's foward backward
+        double ySpeed = joystick.getLeftX() * -1;//X matches sim's left right
+        // multiple by -1 to change sign
+        //when using right stick and point left the sim was rotating right
+        double turningSpeed = joystick.getRightX() * -1 ;
 
         Logger.recordOutput("Joystick/xSpeedRaw", xSpeed);
         Logger.recordOutput("Joystick/ySpeedRaw", ySpeed);
