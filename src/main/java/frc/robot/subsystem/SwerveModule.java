@@ -16,29 +16,29 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.constants.DriveConstants;
 
 public class SwerveModule {
+
     @AutoLog
     public static class SwerveModuleIOInputs {
         public double driveVelocityRadPerSec = 0.0;
         public double drivePositionRad = 0.0;
-        public double driveVoltsAppliedToMotor = 0.0;
-        public double driveVoltsSuppliedToMotorController = 0.0;
+        public double driveAngularAcceleration = 0.0;
 
         public Rotation2d turnMotorControllerPosition = new Rotation2d();
         public Rotation2d absoluteEncoderPosition = new Rotation2d();
-        public double turnVoltsAppliedToMotor = 0.0;
-        public double turnVoltsSuppliedToMotorController = 0.0;
+        public double turnMotorVelocityRadPerSec = 0.0;
+        public double turnMotorAngularAcceleration = 0.0;
 
         public double absolutEncoderRotationsSinceLastReset = 0.0;
     }
 
-    private final SwerveModuleIOInputs inputs = new SwerveModuleIOInputs();
+    private final SwerveModuleIOInputsAutoLogged inputs = new SwerveModuleIOInputsAutoLogged();
 
     private final DutyCycleEncoder absoluteEncoder;
 
@@ -51,13 +51,12 @@ public class SwerveModule {
     // Inputs from drive motor
     private final StatusSignal<AngularVelocity> driveAngularVelocity;
     private final StatusSignal<Angle> drivePosition;
-    private final StatusSignal<Voltage> driveVoltsAppliedToMotor;
-    private final StatusSignal<Voltage> driveVoltsSuppliedToMotorController;
+    private StatusSignal<AngularAcceleration> driveAngularAcceleration;
 
     // Inputs from turn motor
+    private final StatusSignal<AngularVelocity> turnAngularVelocity;
     private final StatusSignal<Angle> turnPosition;
-    private final StatusSignal<Voltage> turnVoltsAppliedToMotor;
-    private final StatusSignal<Voltage> turnVoltsSuppliedToMotorController;
+    private final StatusSignal<AngularAcceleration> turnAcceleration;
     
     public SwerveModule(int driveDeviceId, int turnDeviceId, int absoluteEncoderPort) {
         absoluteEncoder = new DutyCycleEncoder(new DigitalInput(absoluteEncoderPort), 2*Math.PI, 0);
@@ -65,15 +64,13 @@ public class SwerveModule {
         driveMotorController = new TalonFX(driveDeviceId);
         driveAngularVelocity = driveMotorController.getVelocity();
         drivePosition = driveMotorController.getPosition();
-        driveVoltsAppliedToMotor = driveMotorController.getMotorVoltage();
-        driveVoltsSuppliedToMotorController = driveMotorController.getSupplyVoltage();
-        
+        driveAngularAcceleration = driveMotorController.getAcceleration();
 
         turnMotorController = new TalonFX(turnDeviceId);
         turnPositionInput = new PositionVoltage(absoluteEncoder.get()); //set position to what absolute encoder indicates
         turnPosition = turnMotorController.getPosition();
-        turnVoltsAppliedToMotor = turnMotorController.getMotorVoltage();
-        turnVoltsSuppliedToMotorController = turnMotorController.getSupplyVoltage();
+        turnAngularVelocity = turnMotorController.getVelocity();
+        turnAcceleration = turnMotorController.getAcceleration();
 
         this.initDriveControllerPID(driveMotorController);
         this.initTurnControllerPID(turnMotorController);
@@ -163,6 +160,11 @@ public class SwerveModule {
 
         //omega (angular velocity in radians per second) = velocity/radius
         double desiredSpeedOfTheWheelInAngularVelocity = desiredSwerveModuleStates.speedMetersPerSecond/DriveConstants.WHEEL_RADIUS_DEFAULT_VALUE;
+
+//Meters per second ---> Rotations Per Second
+//MPS/(PI&*WHEEL DIAMETER)
+
+
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
 
         Logger.recordOutput("SwerveModule/desiredSpeedOfTheWheelInAngularVelocity",desiredSpeedOfTheWheelInAngularVelocity);
@@ -176,18 +178,21 @@ public class SwerveModule {
      }
 
     public void updateInputs() {
-        BaseStatusSignal.refreshAll(driveAngularVelocity, drivePosition, driveVoltsAppliedToMotor, driveVoltsSuppliedToMotorController, turnPosition, turnVoltsAppliedToMotor, turnVoltsSuppliedToMotorController);
+        BaseStatusSignal.refreshAll(driveAngularVelocity, drivePosition, driveAngularAcceleration, turnPosition, turnAngularVelocity, turnAcceleration);
 
         inputs.driveVelocityRadPerSec=Units.rotationsToRadians(driveAngularVelocity.getValueAsDouble());
         inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
-        inputs.driveVoltsAppliedToMotor=driveVoltsAppliedToMotor.getValueAsDouble();
-        inputs.driveVoltsSuppliedToMotorController=driveVoltsSuppliedToMotorController.getValueAsDouble();
+        inputs.driveAngularAcceleration = driveAngularAcceleration.getValueAsDouble();
         
         //this is the module's angle measured from the motor controller's onboard relative encoder
         inputs.turnMotorControllerPosition=Rotation2d.fromRotations(turnPosition.getValueAsDouble());
-        inputs.turnVoltsAppliedToMotor=turnVoltsAppliedToMotor.getValueAsDouble();
-        inputs.turnVoltsSuppliedToMotorController=turnVoltsSuppliedToMotorController.getValueAsDouble();
+        inputs.turnMotorAngularAcceleration = turnAcceleration.getValueAsDouble();
+        inputs.turnMotorVelocityRadPerSec = Units.rotationsToRadians(turnAngularVelocity.getValueAsDouble());
 
         inputs.absoluteEncoderPosition = new Rotation2d(absoluteEncoder.get());
+    }
+
+    public SwerveModuleIOInputsAutoLogged getInputs() {
+        return inputs;
     }
 }

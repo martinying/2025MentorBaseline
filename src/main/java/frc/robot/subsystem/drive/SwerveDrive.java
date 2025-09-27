@@ -31,6 +31,11 @@ public class SwerveDrive extends SubsystemBase {
     @Override
     public void periodic() {
         this.getMeasuredAngle();
+        for(int counter = 0; counter < 4; counter++) {
+            swerveModules[counter].updateInputs();
+            Logger.processInputs("SwerveDrive/Module/"+counter,swerveModules[counter].getInputs());
+            //Logger.recordOutput("SwerveDrive/Module/"+counter,swerveModules[counter].getInputs());
+        }
     }
      
     public void driveRobot(ChassisSpeeds chassisSpeed) {
