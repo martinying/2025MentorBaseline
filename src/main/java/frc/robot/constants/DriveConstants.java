@@ -3,14 +3,15 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Translation2d;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
 
     public static final int IMU_CAN_ID = 0; //CAN
 
-    public static final double MAX_SPEED_METER_PER_SECCONDS_DEFAULT_VALUE = 5;
+    public static final double MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE = 5;
 
-    public static final double WHEEL_RADIUS_DEFAULT_VALUE = 2;
+    public static final double WHEEL_DIAMETER_IN_METERS = Units.inchesToMeters(4);
 
     public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
         new Translation2d(0.3556 - 0.065, 0.3556 - 0.068), //front left
