@@ -33,9 +33,9 @@ public class SwerveJoystick extends Command {
         Logger.recordOutput("Joystick/turningSpeedRaw", turningSpeed);
 
         //scale to meters per second
-        xSpeed = xSpeed*DriveConstants.MAX_SPEED_METER_PER_SECCONDS_DEFAULT_VALUE;
-        ySpeed = ySpeed*DriveConstants.MAX_SPEED_METER_PER_SECCONDS_DEFAULT_VALUE;
-        turningSpeed = turningSpeed*DriveConstants.MAX_SPEED_METER_PER_SECCONDS_DEFAULT_VALUE;
+        xSpeed = xSpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
+        ySpeed = ySpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
+        turningSpeed = turningSpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
 
         //IN TELEOP WE WANT FIELD RELATIVE
         ChassisSpeeds chassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveDrive.getMeasuredAngle());
