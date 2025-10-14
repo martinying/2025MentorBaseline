@@ -10,7 +10,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.DriveConstants;
-import frc.robot.subsystem.SwerveModule;
 
 public class SwerveDrive extends SubsystemBase {
     private final Canandgyro m_imu = new Canandgyro(DriveConstants.IMU_CAN_ID);
