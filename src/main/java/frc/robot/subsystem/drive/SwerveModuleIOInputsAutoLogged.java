@@ -1,10 +1,9 @@
-package frc.robot.subsystem;
+package frc.robot.subsystem.drive;
 
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.subsystem.SwerveModule.SwerveModuleIOInputs;
+import frc.robot.subsystem.drive.SwerveModule.SwerveModuleIOInputs;
 
 public class SwerveModuleIOInputsAutoLogged extends SwerveModuleIOInputs implements LoggableInputs {
 
