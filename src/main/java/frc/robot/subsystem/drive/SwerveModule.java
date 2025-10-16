@@ -36,8 +36,13 @@ public class SwerveModule {
         public double driveSupplyCurrent = 0.0;
         public double driveSupplyVoltage = 0.0;
         public double driveTorqueCurrent = 0.0;
-        public double driveClosedLoopDerivativeOutput = 0.0;
-        public double  driveClosedLoopIntegralOutput = 0.0;
+        public double drivePidDerivativeOutput = 0.0;
+        public double drivePidIntegralOutput = 0.0;
+        public double drivePidError = 0.0;
+        public double drivePidOutput = 0.0;
+        public double drivePidProportionalOutput = 0.0;
+        public double drivePidReference = 0.0;
+        public double drivePidReferenceSlope = 0.0;
 
         public Rotation2d turnMotorControllerPosition = new Rotation2d();
         public double turnMotorVelocityRadPerSec = 0.0;
@@ -80,8 +85,13 @@ public class SwerveModule {
     private final StatusSignal<Current> driveSupplyCurrent;
     private final StatusSignal<Voltage> driveSupplyVoltage;
     private final StatusSignal<Current> driveTorqueCurrent;
-    private final StatusSignal<Double> driveClosedLoopDerivativeOutput;
-    private final StatusSignal<Double> driveClosedLoopIntegralOutput;
+    private final StatusSignal<Double> drivePidDerivativeOutput;
+    private final StatusSignal<Double> drivePidIntegralOutput;
+    private final StatusSignal<Double> drivePidError;
+    private final StatusSignal<Double> drivePidOutput;
+    private final StatusSignal<Double> drivePidProportionalOutput;
+    private final StatusSignal<Double> drivePidReference;
+    private final StatusSignal<Double> drivePidReferenceSlope;
 
     // Inputs from turn motor
     private final StatusSignal<AngularVelocity> turnAngularVelocity;
@@ -113,8 +123,13 @@ public class SwerveModule {
         driveSupplyCurrent = driveMotorController.getSupplyCurrent();
         driveSupplyVoltage = driveMotorController.getSupplyVoltage();
         driveTorqueCurrent = driveMotorController.getTorqueCurrent();
-        driveClosedLoopDerivativeOutput = driveMotorController.getClosedLoopDerivativeOutput();
-        driveClosedLoopIntegralOutput = driveMotorController.getClosedLoopIntegratedOutput();
+        drivePidDerivativeOutput = driveMotorController.getClosedLoopDerivativeOutput();
+        drivePidIntegralOutput = driveMotorController.getClosedLoopIntegratedOutput();
+        drivePidError = driveMotorController.getClosedLoopError();
+        drivePidOutput = driveMotorController.getClosedLoopOutput();
+        drivePidProportionalOutput = driveMotorController.getClosedLoopProportionalOutput();
+        drivePidReference = driveMotorController.getClosedLoopReference();
+        drivePidReferenceSlope = driveMotorController.getClosedLoopReferenceSlope();
 
         turnMotorController = new TalonFX(turnDeviceId);
         //turnPositionInput = new PositionVoltage(absoluteEncoder.get()); //set position to what absolute encoder indicates
@@ -165,53 +180,6 @@ public class SwerveModule {
 
     }
 
-//    private void initTurnControllerPID(TalonFX turnCTalonFX) {
-//        Slot0Configs config = new Slot0Configs();
-//        config.kP = 2.4; // An error of 1 rotation results in 2.4 V output
-//        config.kI = 0; // no output for integrated error
-//        config.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
-//
-//        turnCTalonFX.getConfigurator().apply(config);
-//    }
-//
-//    private void initTurnControllerMotionMagic(TalonFX turnCTalonFX) {
-//        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-//
-//        Slot0Configs slot0Configs = talonFXConfiguration.Slot0;
-//        slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
-//        slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-//        slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-//        slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
-//        slot0Configs.kI = 0; // no output for integrated error
-//        slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
-//
-//        MotionMagicConfigs motionMagicConfigs = talonFXConfiguration.MotionMagic;
-//        motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-//        motionMagicConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
-//        motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
-//
-//        turnCTalonFX.getConfigurator().apply(talonFXConfiguration);
-//    }
-//
-//    private void initTurnControllerMotionMagicExpo(TalonFX turnCTalonFX) {
-//        TalonFXConfiguration talonFXConfiguration = new TalonFXConfiguration();
-//
-//        Slot0Configs slot0Configs = talonFXConfiguration.Slot0;
-//        slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
-//        slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-//        slot0Configs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-//        slot0Configs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
-//        slot0Configs.kI = 0; // no output for integrated error
-//        slot0Configs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
-//
-//        MotionMagicConfigs motionMagicConfigs = talonFXConfiguration.MotionMagic;
-//        motionMagicConfigs.MotionMagicCruiseVelocity = 0; // Unlimited cruise velocity
-//        motionMagicConfigs.MotionMagicExpo_kV = 0.12; // kV is around 0.12 V/rps
-//        motionMagicConfigs.MotionMagicExpo_kA = 0.1; // Use a slower kA of 0.1 V/(rps/s)
-//
-//        turnCTalonFX.getConfigurator().apply(talonFXConfiguration);
-//    }
-
      public void setModuleState(SwerveModuleState desiredSwerveModuleStates, int moduleIndex) {
 
         String loggerKeyPrefix = "SwerveModule/";
@@ -234,21 +202,21 @@ public class SwerveModule {
         desiredSwerveModuleStates.optimize(inputs.absoluteEncoderPosition);
 
         //omega (angular velocity in radians per second) = velocity/radius
-        double desiredSpeedOfTheWheelInAngularVelocity = desiredSwerveModuleStates.speedMetersPerSecond/(DriveConstants.WHEEL_DIAMETER_IN_METERS*Math.PI);
+        double wheelRotationsPerSec = desiredSwerveModuleStates.speedMetersPerSecond/(DriveConstants.WHEEL_DIAMETER_IN_METERS*Math.PI);
+        double desiredMotorRotationsPerSec = wheelRotationsPerSec*DriveConstants.SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO;
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
         PIDController turnPIDController = new PIDController(1, 0, 0);
 
-        Logger.recordOutput(loggerKeyPrefix+"desiredSpeedOfTheWheelInAngularVelocity",desiredSpeedOfTheWheelInAngularVelocity);
+        Logger.recordOutput("SwerveDrive/WheelDiameterInMeters",DriveConstants.WHEEL_DIAMETER_IN_METERS);
+        Logger.recordOutput(loggerKeyPrefix+"wheelRotationsPerSec",wheelRotationsPerSec);
+        Logger.recordOutput(loggerKeyPrefix+"desiredMotorRotationsPerSec",desiredMotorRotationsPerSec);
         Logger.recordOutput(loggerKeyPrefix+"desiredAngleOfTheWheel", desiredAngleOfTheWheel);
 
 //        turnMotorController.setControl(
 //                turnMotorControllerInput.withOutput(
 //                        turnPIDController.calculate(absoluteEncoder.get(), desiredAngleOfTheWheel.getDegrees())));
 
-        driveMotorController.setControl(driveVelocityInput.withVelocity(Units.radiansToRotations(desiredSpeedOfTheWheelInAngularVelocity)));//expect rotations per second
-
-//        Logger.recordOutput(loggerKeyPrefix+"driveMCFaultField", driveMotorController.getFaultField().getValue());
-//        Logger.recordOutput(loggerKeyPrefix+"turnMCFaultField", turnMotorController.getFaultField().getValue());
+        driveMotorController.setControl(driveVelocityInput.withVelocity(desiredMotorRotationsPerSec));
      }
 
     public void updateInputs() {
@@ -257,7 +225,10 @@ public class SwerveModule {
                 driveBridgeOutput, driveControlSystemTotalOutput,
                 driveControlSystemProportionalOutput, driveControlSystemReference,
                 driveDutyCycle, driveVoltage, driveSupplyCurrent, driveSupplyVoltage,
-                driveTorqueCurrent, turnPosition, turnAngularVelocity, turnAcceleration,
+                driveTorqueCurrent, drivePidDerivativeOutput, drivePidIntegralOutput,
+                drivePidError, drivePidOutput, drivePidProportionalOutput,
+                drivePidReference, drivePidReferenceSlope,
+                turnPosition, turnAngularVelocity, turnAcceleration,
                 turnBridgeOutput, turnDutyCycle, turnVoltage, turnSupplyCurrent,
                 turnSupplyVoltage, turnTorqueCurrent);
 
@@ -273,8 +244,13 @@ public class SwerveModule {
         inputs.driveSupplyCurrent = driveSupplyCurrent.getValueAsDouble();
         inputs.driveSupplyVoltage = driveSupplyVoltage.getValueAsDouble();
         inputs.driveTorqueCurrent = driveTorqueCurrent.getValueAsDouble();
-        inputs.driveClosedLoopDerivativeOutput = driveClosedLoopDerivativeOutput.getValueAsDouble();
-        inputs.driveClosedLoopIntegralOutput = driveClosedLoopIntegralOutput.getValueAsDouble();
+        inputs.drivePidDerivativeOutput = drivePidDerivativeOutput.getValueAsDouble();
+        inputs.drivePidIntegralOutput = drivePidIntegralOutput.getValueAsDouble();
+        inputs.drivePidError = drivePidError.getValueAsDouble();
+        inputs.drivePidOutput = drivePidOutput.getValueAsDouble();
+        inputs.drivePidProportionalOutput = drivePidProportionalOutput.getValueAsDouble();
+        inputs.drivePidReference = drivePidReference.getValueAsDouble();
+        inputs.drivePidReferenceSlope = drivePidReferenceSlope.getValueAsDouble();
         
         //this is the module's angle measured from the motor controller's onboard relative encoder
         inputs.turnMotorControllerPosition=Rotation2d.fromRotations(turnPosition.getValueAsDouble());

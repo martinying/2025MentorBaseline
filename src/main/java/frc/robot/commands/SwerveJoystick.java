@@ -22,7 +22,7 @@ public class SwerveJoystick extends Command {
 
     @Override
     public void execute() {
-        double xSpeed = joystick.getLeftY() * -1;//Y matches sim's foward backward
+        double xSpeed = joystick.getLeftY() * -1;//Y matches sim's forward backward
         double ySpeed = joystick.getLeftX() * -1;//X matches sim's left right
         // multiple by -1 to change sign
         //when using right stick and point left the sim was rotating right
@@ -36,6 +36,9 @@ public class SwerveJoystick extends Command {
         xSpeed = xSpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
         ySpeed = ySpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
         turningSpeed = turningSpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
+
+        ySpeed = 0;
+        turningSpeed = 0;
 
         //IN TELEOP WE WANT FIELD RELATIVE
         ChassisSpeeds chassisSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed, swerveDrive.getMeasuredAngle());

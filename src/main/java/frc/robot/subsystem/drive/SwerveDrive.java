@@ -53,10 +53,11 @@ public class SwerveDrive extends SubsystemBase {
         Logger.recordOutput("SwerveDrive/chassisSpeed", chassisSpeed);
 
         SwerveModuleState [] desiredSwerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeed);
-        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates/FrontLeft", desiredSwerveModuleStates[DriveConstants.FRONT_LEFT_MODULE_INDEX]);
-        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates/FrontRight", desiredSwerveModuleStates[DriveConstants.FRONT_RIGHT_MODULE_INDEX]);
-        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates/BackLeft", desiredSwerveModuleStates[DriveConstants.BACK_LEFT_MODULE_INDEX]);
-        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates/BackRight", desiredSwerveModuleStates[DriveConstants.BACK_RIGHT_MODULE_INDEX]);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates",desiredSwerveModuleStates);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStatesFrontLeft", desiredSwerveModuleStates[DriveConstants.FRONT_LEFT_MODULE_INDEX]);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStatesFrontRight", desiredSwerveModuleStates[DriveConstants.FRONT_RIGHT_MODULE_INDEX]);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStatesBackLeft", desiredSwerveModuleStates[DriveConstants.BACK_LEFT_MODULE_INDEX]);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStatesBackRight", desiredSwerveModuleStates[DriveConstants.BACK_RIGHT_MODULE_INDEX]);
 
         for(int counter = 0; counter < 4; counter++) {
             swerveModules[counter].setModuleState(desiredSwerveModuleStates[counter],counter);
