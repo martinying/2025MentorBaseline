@@ -5,5 +5,5 @@ public class IOConstants {
         //hide constructor to prevent instantiation
     }
 
-    public static final int DRIVE_JOYSTICK_ID = 0;
+    public static final int DRIVE_JOYSTICK_ID = 2;
 }
