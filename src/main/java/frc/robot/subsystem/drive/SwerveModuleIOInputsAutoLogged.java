@@ -21,6 +21,13 @@ public class SwerveModuleIOInputsAutoLogged extends SwerveModuleIOInputs impleme
         table.put("driveSupplyCurrent", driveSupplyCurrent);
         table.put("driveSupplyVoltage", driveSupplyVoltage);
         table.put("driveTorqueCurrent", driveTorqueCurrent);
+        table.put("drivePidDerivativeOutput", drivePidDerivativeOutput);
+        table.put("drivePidIntegralOutput", drivePidIntegralOutput);
+        table.put("drivePidError", drivePidError);
+        table.put("drivePidOutput", drivePidOutput);
+        table.put("drivePidProportionalOutput", drivePidProportionalOutput);
+        table.put("drivePidReference", drivePidReference);
+        table.put("drivePidReferenceSlope", drivePidReferenceSlope);
         
         table.put("turnMotorControllerPosition", turnMotorControllerPosition);
         table.put("absoluteEncoderPosition", absoluteEncoderPosition);
@@ -48,6 +55,13 @@ public class SwerveModuleIOInputsAutoLogged extends SwerveModuleIOInputs impleme
         driveSupplyCurrent = table.get("driveSupplyCurrent", driveSupplyCurrent);
         driveSupplyVoltage = table.get("driveSupplyVoltage", driveSupplyVoltage);
         driveTorqueCurrent = table.get("driveTorqueCurrent", driveTorqueCurrent);
+        drivePidDerivativeOutput = table.get("drivePidDerivativeOutput", drivePidDerivativeOutput);
+        drivePidIntegralOutput = table.get("drivePidIntegralOutput", drivePidIntegralOutput);
+        drivePidError = table.get("drivePidError", drivePidError);
+        drivePidOutput = table.get("drivePidOutput", drivePidOutput);
+        drivePidProportionalOutput = table.get("drivePidProportionalOutput", drivePidProportionalOutput);
+        drivePidReference = table.get("drivePidReference", drivePidReference);
+        drivePidReferenceSlope = table.get("drivePidReferenceSlope", drivePidReferenceSlope);
 
         turnMotorControllerPosition = table.get("turnMotorControllerPosition", turnMotorControllerPosition);
         absoluteEncoderPosition = table.get("absoluteEncoderPosition", absoluteEncoderPosition);

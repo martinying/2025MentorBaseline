@@ -6,6 +6,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public class DriveConstants {
+    private DriveConstants() {
+        //hide constructor to prevent instantiation
+    }
 
     public static final int IMU_CAN_ID = 0; //CAN
 
@@ -26,12 +29,14 @@ public class DriveConstants {
         new Translation2d(0.3556 - 0.644, -0.3556 + 0.063) //back right
     );
 
+    public static final double SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO = 6.25;
+
     public static final int FRONT_LEFT_MODULE_INDEX = 0;
     public static final int FRONT_RIGHT_MODULE_INDEX = 1;
     public static final int BACK_LEFT_MODULE_INDEX = 2;
     public static final int BACK_RIGHT_MODULE_INDEX = 3;
 
-    public static final int FRONT_RIGHT_KRAKEN_ID = 4;
+    public static final int FRONT_RIGHT_KRAKEN_ID = 5;
     public static final int FRONT_RIGHT_FALCON_ID = 14;
     public static final int FRONT_LEFT_KRAKEN_ID = 1;
     public static final int FRONT_LEFT_FALCON_ID = 11;
