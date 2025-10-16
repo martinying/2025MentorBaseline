@@ -36,8 +36,7 @@ public class SwerveJoystick extends Command {
         xSpeed = xSpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
         ySpeed = ySpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
         turningSpeed = turningSpeed*DriveConstants.MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE;
-
-        ySpeed = 0;
+        
         turningSpeed = 0;
 
         //IN TELEOP WE WANT FIELD RELATIVE

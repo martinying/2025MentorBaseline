@@ -108,7 +108,7 @@ public class SwerveModule {
     private final StatusSignal<Double> turnClosedLoopIntegralOutput;
 
     public SwerveModule(int driveDeviceId, int turnDeviceId, int absoluteEncoderPort) {
-        absoluteEncoder = new DutyCycleEncoder(new DigitalInput(absoluteEncoderPort), 2*Math.PI, 0);
+        absoluteEncoder = new DutyCycleEncoder(new DigitalInput(absoluteEncoderPort), 360, 0);
 
         driveMotorController = new TalonFX(driveDeviceId);
         driveAngularVelocity = driveMotorController.getVelocity();
@@ -206,17 +206,21 @@ public class SwerveModule {
         double desiredMotorRotationsPerSec = wheelRotationsPerSec*DriveConstants.SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO;
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
         PIDController turnPIDController = new PIDController(1, 0, 0);
+        double turnPIDControllerCalculateOutput = turnPIDController.calculate(inputs.absoluteEncoderPosition.getDegrees(), desiredAngleOfTheWheel.getDegrees());
 
         Logger.recordOutput("SwerveDrive/WheelDiameterInMeters",DriveConstants.WHEEL_DIAMETER_IN_METERS);
         Logger.recordOutput(loggerKeyPrefix+"wheelRotationsPerSec",wheelRotationsPerSec);
         Logger.recordOutput(loggerKeyPrefix+"desiredMotorRotationsPerSec",desiredMotorRotationsPerSec);
         Logger.recordOutput(loggerKeyPrefix+"desiredAngleOfTheWheel", desiredAngleOfTheWheel);
+        Logger.recordOutput(loggerKeyPrefix+"PID/calculateOutput", turnPIDControllerCalculateOutput);
+        Logger.recordOutput(loggerKeyPrefix+"PID/error", turnPIDController.getError());
+        Logger.recordOutput(loggerKeyPrefix+"PID/accumulatedError", turnPIDController.getAccumulatedError());
+        Logger.recordOutput(loggerKeyPrefix+"PID/errorDerivative", turnPIDController.getErrorDerivative());
 
-//        turnMotorController.setControl(
-//                turnMotorControllerInput.withOutput(
-//                        turnPIDController.calculate(absoluteEncoder.get(), desiredAngleOfTheWheel.getDegrees())));
+        turnMotorController.setControl(
+                turnMotorControllerInput.withOutput(turnPIDControllerCalculateOutput));
 
-        driveMotorController.setControl(driveVelocityInput.withVelocity(desiredMotorRotationsPerSec));
+        //driveMotorController.setControl(driveVelocityInput.withVelocity(desiredMotorRotationsPerSec));
      }
 
     public void updateInputs() {
