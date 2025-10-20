@@ -219,7 +219,8 @@ public class SwerveModule {
         turnMotorController.setControl(
                 turnMotorControllerInput.withOutput(turnPIDControllerCalculateOutput));
 
-        //driveMotorController.setControl(driveVelocityInput.withVelocity(desiredMotorRotationsPerSec));
+        //set to 0 to ensure the wheel velocity doesn't move
+        driveMotorController.setControl(driveVelocityInput.withVelocity(0));
      }
 
     public void updateInputs() {
