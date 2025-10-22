@@ -204,7 +204,7 @@ public class SwerveModule {
         double wheelRotationsPerSec = desiredSwerveModuleStates.speedMetersPerSecond/(DriveConstants.WHEEL_DIAMETER_IN_METERS*Math.PI);
         double desiredMotorRotationsPerSec = wheelRotationsPerSec*DriveConstants.SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO;
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
-        PIDController turnPIDController = new PIDController(1, 0, 0);
+        PIDController turnPIDController = new PIDController(0.5, 0, 0);
         double turnPIDControllerCalculateOutput = turnPIDController.calculate(inputs.absoluteEncoderPosition, desiredAngleOfTheWheel.getDegrees());
 
         Logger.recordOutput("SwerveDrive/WheelDiameterInMeters",DriveConstants.WHEEL_DIAMETER_IN_METERS);
@@ -219,8 +219,7 @@ public class SwerveModule {
         turnMotorController.setControl(
                 turnMotorControllerInput.withOutput(turnPIDControllerCalculateOutput));
 
-        //set to 0 to ensure the wheel velocity doesn't move
-        driveMotorController.setControl(driveVelocityInput.withVelocity(0));
+        //driveMotorController.setControl(driveVelocityInput.withVelocity(desiredMotorRotationsPerSec));
      }
 
     public void updateInputs() {
