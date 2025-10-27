@@ -53,8 +53,6 @@ public class SwerveModule {
         public double turnSupplyCurrent = 0.0;
         public double turnSupplyVoltage = 0.0;
         public double turnTorqueCurrent = 0.0;
-        public double turnClosedLoopDerivativeOutput = 0.0;
-        public double turnClosedLoopIntegralOutput = 0.0;
 
         public Rotation2d absoluteEncoderPosition = new Rotation2d();
     }
@@ -62,12 +60,12 @@ public class SwerveModule {
     private final SwerveModuleIOInputsAutoLogged inputs = new SwerveModuleIOInputsAutoLogged();
 
     private final DutyCycleEncoder absoluteEncoder;
+    private final double absoluteEncoderOffset;
 
     private final TalonFX driveMotorController;
     private final VelocityVoltage driveVelocityInput = new VelocityVoltage(0);//default frequency is 100Hz, every 10 ms
 
     private final TalonFX turnMotorController;
-    //private final PositionVoltage turnPositionInput;
     private final DutyCycleOut turnMotorControllerInput = new DutyCycleOut(0);
     
     // Inputs from drive motor
@@ -104,11 +102,10 @@ public class SwerveModule {
     private final StatusSignal<Current> turnSupplyCurrent;
     private final StatusSignal<Voltage> turnSupplyVoltage;
     private final StatusSignal<Current> turnTorqueCurrent;
-    private final StatusSignal<Double> turnClosedLoopDerivativeOutput;
-    private final StatusSignal<Double> turnClosedLoopIntegralOutput;
 
-    public SwerveModule(int driveDeviceId, int turnDeviceId, int absoluteEncoderPort) {
+    public SwerveModule(int driveDeviceId, int turnDeviceId, int absoluteEncoderPort, double absoluteEncoderOffset) {
         absoluteEncoder = new DutyCycleEncoder(new DigitalInput(absoluteEncoderPort), 2*Math.PI, 0);
+        this.absoluteEncoderOffset = absoluteEncoderOffset;
 
         driveMotorController = new TalonFX(driveDeviceId);
         driveAngularVelocity = driveMotorController.getVelocity();
@@ -142,11 +139,8 @@ public class SwerveModule {
         turnSupplyCurrent = turnMotorController.getSupplyCurrent();
         turnSupplyVoltage = turnMotorController.getSupplyVoltage();
         turnTorqueCurrent = turnMotorController.getTorqueCurrent();
-        turnClosedLoopDerivativeOutput =  turnMotorController.getClosedLoopDerivativeOutput();
-        turnClosedLoopIntegralOutput = turnMotorController.getClosedLoopIntegratedOutput();
 
         this.initDriveControllerPID(driveMotorController);
-        //this.initTurnControllerPID(turnMotorController);
     }
 
     private void initDriveControllerPID(TalonFX driveCTalonFX) {
@@ -204,6 +198,7 @@ public class SwerveModule {
         //omega (angular velocity in radians per second) = velocity/radius
         double wheelRotationsPerSec = desiredSwerveModuleStates.speedMetersPerSecond/(DriveConstants.WHEEL_DIAMETER_IN_METERS*Math.PI);
         double desiredMotorRotationsPerSec = wheelRotationsPerSec*DriveConstants.SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO;
+
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
         PIDController turnPIDController = new PIDController(1, 0, 0);
 
@@ -212,11 +207,11 @@ public class SwerveModule {
         Logger.recordOutput(loggerKeyPrefix+"desiredMotorRotationsPerSec",desiredMotorRotationsPerSec);
         Logger.recordOutput(loggerKeyPrefix+"desiredAngleOfTheWheel", desiredAngleOfTheWheel);
 
-//        turnMotorController.setControl(
-//                turnMotorControllerInput.withOutput(
-//                        turnPIDController.calculate(absoluteEncoder.get(), desiredAngleOfTheWheel.getDegrees())));
+        turnPIDController.calculate(absoluteEncoder.get(), desiredAngleOfTheWheel.getDegrees());
+        turnMotorController.setControl(
+                turnMotorControllerInput.withOutput(0));
 
-        driveMotorController.setControl(driveVelocityInput.withVelocity(desiredMotorRotationsPerSec));
+        driveMotorController.setControl(driveVelocityInput.withVelocity(0));
      }
 
     public void updateInputs() {
@@ -262,8 +257,6 @@ public class SwerveModule {
         inputs.turnSupplyCurrent = turnSupplyCurrent.getValueAsDouble();
         inputs.turnSupplyVoltage = turnSupplyVoltage.getValueAsDouble();
         inputs.turnTorqueCurrent = turnTorqueCurrent.getValueAsDouble();
-        inputs.turnClosedLoopDerivativeOutput = turnClosedLoopDerivativeOutput.getValueAsDouble();
-        inputs.turnClosedLoopIntegralOutput = turnClosedLoopIntegralOutput.getValueAsDouble();
 
         inputs.absoluteEncoderPosition = new Rotation2d(absoluteEncoder.get());
     }

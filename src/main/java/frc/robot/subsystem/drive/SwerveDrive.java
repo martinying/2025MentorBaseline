@@ -16,10 +16,10 @@ public class SwerveDrive extends SubsystemBase {
     private final SwerveModule[] swerveModules = new SwerveModule[4];
 
     public SwerveDrive() {
-        swerveModules[DriveConstants.FRONT_LEFT_MODULE_INDEX] = new SwerveModule(DriveConstants.FRONT_LEFT_KRAKEN_ID,DriveConstants.FRONT_LEFT_FALCON_ID,DriveConstants.FRONT_LEFT_ENCODER_ID);
-        swerveModules[DriveConstants.FRONT_RIGHT_MODULE_INDEX] = new SwerveModule(DriveConstants.FRONT_RIGHT_KRAKEN_ID,DriveConstants.FRONT_RIGHT_FALCON_ID,DriveConstants.FRONT_RIGHT_ENCODER_ID);
-        swerveModules[DriveConstants.BACK_LEFT_MODULE_INDEX] = new SwerveModule(DriveConstants.BACK_LEFT_KRAKEN_ID,DriveConstants.BACK_LEFT_FALCON_ID,DriveConstants.BACK_LEFT_ENCODER_ID);
-        swerveModules[DriveConstants.BACK_RIGHT_MODULE_INDEX] = new SwerveModule(DriveConstants.BACK_RIGHT_KRAKEN_ID,DriveConstants.BACK_RIGHT_FALCON_ID,DriveConstants.BACK_RIGHT_ENCODER_ID);
+        swerveModules[DriveConstants.FRONT_LEFT_MODULE_INDEX] = new SwerveModule(DriveConstants.FRONT_LEFT_KRAKEN_ID,DriveConstants.FRONT_LEFT_FALCON_ID,DriveConstants.FRONT_LEFT_ENCODER_ID,DriveConstants.FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET);
+        swerveModules[DriveConstants.FRONT_RIGHT_MODULE_INDEX] = new SwerveModule(DriveConstants.FRONT_RIGHT_KRAKEN_ID,DriveConstants.FRONT_RIGHT_FALCON_ID,DriveConstants.FRONT_RIGHT_ENCODER_ID,DriveConstants.FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET);
+        swerveModules[DriveConstants.BACK_LEFT_MODULE_INDEX] = new SwerveModule(DriveConstants.BACK_LEFT_KRAKEN_ID,DriveConstants.BACK_LEFT_FALCON_ID,DriveConstants.BACK_LEFT_ENCODER_ID,DriveConstants.BACK_LEFT_ABSOLUTE_ENCODER_OFFSET);
+        swerveModules[DriveConstants.BACK_RIGHT_MODULE_INDEX] = new SwerveModule(DriveConstants.BACK_RIGHT_KRAKEN_ID,DriveConstants.BACK_RIGHT_FALCON_ID,DriveConstants.BACK_RIGHT_ENCODER_ID,DriveConstants.BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET);
     }
     
     @AutoLogOutput(key = "SwerveDrive/measuredAngle")
@@ -54,10 +54,10 @@ public class SwerveDrive extends SubsystemBase {
 
         SwerveModuleState [] desiredSwerveModuleStates = DriveConstants.DRIVE_KINEMATICS.toSwerveModuleStates(chassisSpeed);
         Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates",desiredSwerveModuleStates);
-        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStatesFrontLeft", desiredSwerveModuleStates[DriveConstants.FRONT_LEFT_MODULE_INDEX]);
-        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStatesFrontRight", desiredSwerveModuleStates[DriveConstants.FRONT_RIGHT_MODULE_INDEX]);
-        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStatesBackLeft", desiredSwerveModuleStates[DriveConstants.BACK_LEFT_MODULE_INDEX]);
-        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStatesBackRight", desiredSwerveModuleStates[DriveConstants.BACK_RIGHT_MODULE_INDEX]);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates/FrontLeft", desiredSwerveModuleStates[DriveConstants.FRONT_LEFT_MODULE_INDEX]);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates/FrontRight", desiredSwerveModuleStates[DriveConstants.FRONT_RIGHT_MODULE_INDEX]);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates/BackLeft", desiredSwerveModuleStates[DriveConstants.BACK_LEFT_MODULE_INDEX]);
+        Logger.recordOutput("SwerveDrive/DesiredSwerveModuleStates/BackRight", desiredSwerveModuleStates[DriveConstants.BACK_RIGHT_MODULE_INDEX]);
 
         for(int counter = 0; counter < 4; counter++) {
             swerveModules[counter].setModuleState(desiredSwerveModuleStates[counter],counter);

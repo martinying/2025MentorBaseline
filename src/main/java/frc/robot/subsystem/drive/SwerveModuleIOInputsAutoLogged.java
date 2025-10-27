@@ -9,70 +9,70 @@ public class SwerveModuleIOInputsAutoLogged extends SwerveModuleIOInputs impleme
 
     @Override
     public void toLog(LogTable table) {
-        table.put("driveVelocityRadPerSec", driveVelocityRadPerSec);
-        table.put("drivePositionRad", drivePositionRad);
-        table.put("driveAngularAcceleration", driveAngularAcceleration);
-        table.put("driveBridgeOutput", driveBridgeOutput);
-        table.put("driveControlSystemTotalOutput", driveControlSystemTotalOutput);
-        table.put("driveControlSystemProportionalOutput", driveControlSystemProportionalOutput);
-        table.put("driveControlSystemReference", driveControlSystemReference);
-        table.put("driveDutyCycle", driveDutyCycle);
-        table.put("driveVoltage", driveVoltage);
-        table.put("driveSupplyCurrent", driveSupplyCurrent);
-        table.put("driveSupplyVoltage", driveSupplyVoltage);
-        table.put("driveTorqueCurrent", driveTorqueCurrent);
-        table.put("drivePidDerivativeOutput", drivePidDerivativeOutput);
-        table.put("drivePidIntegralOutput", drivePidIntegralOutput);
-        table.put("drivePidError", drivePidError);
-        table.put("drivePidOutput", drivePidOutput);
-        table.put("drivePidProportionalOutput", drivePidProportionalOutput);
-        table.put("drivePidReference", drivePidReference);
-        table.put("drivePidReferenceSlope", drivePidReferenceSlope);
+        table.put("drive/VelocityRadPerSec", driveVelocityRadPerSec);
+        table.put("drive/PositionRad", drivePositionRad);
+        table.put("drive/AngularAcceleration", driveAngularAcceleration);
+        table.put("drive/BridgeOutput", driveBridgeOutput);
+        table.put("drive/ControlSystemTotalOutput", driveControlSystemTotalOutput);
+        table.put("drive/ControlSystemProportionalOutput", driveControlSystemProportionalOutput);
+        table.put("drive/ControlSystemReference", driveControlSystemReference);
+        table.put("drive/DutyCycle", driveDutyCycle);
+        table.put("drive/Voltage", driveVoltage);
+        table.put("drive/SupplyCurrent", driveSupplyCurrent);
+        table.put("drive/SupplyVoltage", driveSupplyVoltage);
+        table.put("drive/TorqueCurrent", driveTorqueCurrent);
+        table.put("drive/Pid/DerivativeOutput", drivePidDerivativeOutput);
+        table.put("drive/Pid/IntegralOutput", drivePidIntegralOutput);
+        table.put("drive/Pid/Error", drivePidError);
+        table.put("drive/Pid/Output", drivePidOutput);
+        table.put("drive/Pid/ProportionalOutput", drivePidProportionalOutput);
+        table.put("drive/Pid/Reference", drivePidReference);
+        table.put("drive/Pid/ReferenceSlope", drivePidReferenceSlope);
         
-        table.put("turnMotorControllerPosition", turnMotorControllerPosition);
+        table.put("turn/MotorControllerPosition", turnMotorControllerPosition);
         table.put("absoluteEncoderPosition", absoluteEncoderPosition);
-        table.put("turnMotorVelocityRadPerSec", turnMotorVelocityRadPerSec);
-        table.put("turnMotorAngularAcceleration", turnMotorAngularAcceleration);
-        table.put("turnBridgeOutput", turnBridgeOutput);
-        table.put("turnDutyCycle", turnDutyCycle);
-        table.put("turnVoltage", turnVoltage);
-        table.put("turnSupplyCurrent", turnSupplyCurrent);
-        table.put("turnSupplyVoltage", turnSupplyVoltage);
-        table.put("turnTorqueCurrent", turnTorqueCurrent);
+        table.put("turn/MotorVelocityRadPerSec", turnMotorVelocityRadPerSec);
+        table.put("turn/MotorAngularAcceleration", turnMotorAngularAcceleration);
+        table.put("turn/BridgeOutput", turnBridgeOutput);
+        table.put("turn/DutyCycle", turnDutyCycle);
+        table.put("turn/Voltage", turnVoltage);
+        table.put("turn/SupplyCurrent", turnSupplyCurrent);
+        table.put("turn/SupplyVoltage", turnSupplyVoltage);
+        table.put("turn/TorqueCurrent", turnTorqueCurrent);
     }
 
     @Override
     public void fromLog(LogTable table) {
-        driveVelocityRadPerSec = table.get("driveVelocityRadPerSec", driveVelocityRadPerSec);
-        drivePositionRad = table.get("drivePositionRad", drivePositionRad);
-        driveAngularAcceleration = table.get("driveAngularAcceleration", driveAngularAcceleration);
-        driveBridgeOutput = table.get("driveBridgeOutput", driveBridgeOutput);
-        driveControlSystemTotalOutput = table.get("driveControlSystemTotalOutput", driveControlSystemTotalOutput);
-        driveControlSystemProportionalOutput = table.get("driveControlSystemProportionalOutput", driveControlSystemProportionalOutput);
-        driveControlSystemReference = table.get("driveControlSystemReference", driveControlSystemReference);
-        driveDutyCycle = table.get("driveDutyCycle", driveDutyCycle);
-        driveVoltage = table.get("driveVoltage", driveVoltage);
-        driveSupplyCurrent = table.get("driveSupplyCurrent", driveSupplyCurrent);
-        driveSupplyVoltage = table.get("driveSupplyVoltage", driveSupplyVoltage);
-        driveTorqueCurrent = table.get("driveTorqueCurrent", driveTorqueCurrent);
-        drivePidDerivativeOutput = table.get("drivePidDerivativeOutput", drivePidDerivativeOutput);
-        drivePidIntegralOutput = table.get("drivePidIntegralOutput", drivePidIntegralOutput);
-        drivePidError = table.get("drivePidError", drivePidError);
-        drivePidOutput = table.get("drivePidOutput", drivePidOutput);
-        drivePidProportionalOutput = table.get("drivePidProportionalOutput", drivePidProportionalOutput);
-        drivePidReference = table.get("drivePidReference", drivePidReference);
-        drivePidReferenceSlope = table.get("drivePidReferenceSlope", drivePidReferenceSlope);
+        driveVelocityRadPerSec = table.get("drive/VelocityRadPerSec", driveVelocityRadPerSec);
+        drivePositionRad = table.get("drive/PositionRad", drivePositionRad);
+        driveAngularAcceleration = table.get("drive/AngularAcceleration", driveAngularAcceleration);
+        driveBridgeOutput = table.get("drive/BridgeOutput", driveBridgeOutput);
+        driveControlSystemTotalOutput = table.get("drive/ControlSystemTotalOutput", driveControlSystemTotalOutput);
+        driveControlSystemProportionalOutput = table.get("drive/ControlSystemProportionalOutput", driveControlSystemProportionalOutput);
+        driveControlSystemReference = table.get("drive/ControlSystemReference", driveControlSystemReference);
+        driveDutyCycle = table.get("drive/DutyCycle", driveDutyCycle);
+        driveVoltage = table.get("drive/Voltage", driveVoltage);
+        driveSupplyCurrent = table.get("drive/SupplyCurrent", driveSupplyCurrent);
+        driveSupplyVoltage = table.get("drive/SupplyVoltage", driveSupplyVoltage);
+        driveTorqueCurrent = table.get("drive/TorqueCurrent", driveTorqueCurrent);
+        drivePidDerivativeOutput = table.get("drive/Pid/DerivativeOutput", drivePidDerivativeOutput);
+        drivePidIntegralOutput = table.get("drive/Pid/IntegralOutput", drivePidIntegralOutput);
+        drivePidError = table.get("drive/Pid/Error", drivePidError);
+        drivePidOutput = table.get("drive/Pid/Output", drivePidOutput);
+        drivePidProportionalOutput = table.get("drive/Pid/ProportionalOutput", drivePidProportionalOutput);
+        drivePidReference = table.get("drive/Pid/Reference", drivePidReference);
+        drivePidReferenceSlope = table.get("drive/Pid/ReferenceSlope", drivePidReferenceSlope);
 
-        turnMotorControllerPosition = table.get("turnMotorControllerPosition", turnMotorControllerPosition);
+        turnMotorControllerPosition = table.get("turn/MotorControllerPosition", turnMotorControllerPosition);
         absoluteEncoderPosition = table.get("absoluteEncoderPosition", absoluteEncoderPosition);
-        turnMotorVelocityRadPerSec = table.get("turnMotorVelocityRadPerSec", turnMotorVelocityRadPerSec);    
-        turnMotorAngularAcceleration = table.get("turnMotorAngularAcceleration", turnMotorAngularAcceleration);
-        turnBridgeOutput = table.get("turnBridgeOutput", turnBridgeOutput);
-        turnDutyCycle = table.get("turnDutyCycle", turnDutyCycle);
-        turnVoltage = table.get("turnVoltage", turnVoltage);
-        turnSupplyCurrent = table.get("turnSupplyCurrent", turnSupplyCurrent);
-        turnSupplyVoltage = table.get("turnSupplyVoltage", turnSupplyVoltage);
-        turnTorqueCurrent = table.get("turnTorqueCurrent", turnTorqueCurrent);
+        turnMotorVelocityRadPerSec = table.get("turn/MotorVelocityRadPerSec", turnMotorVelocityRadPerSec);
+        turnMotorAngularAcceleration = table.get("turn/MotorAngularAcceleration", turnMotorAngularAcceleration);
+        turnBridgeOutput = table.get("turn/BridgeOutput", turnBridgeOutput);
+        turnDutyCycle = table.get("turn/DutyCycle", turnDutyCycle);
+        turnVoltage = table.get("turn/Voltage", turnVoltage);
+        turnSupplyCurrent = table.get("turn/SupplyCurrent", turnSupplyCurrent);
+        turnSupplyVoltage = table.get("turn/SupplyVoltage", turnSupplyVoltage);
+        turnTorqueCurrent = table.get("turn/TorqueCurrent", turnTorqueCurrent);
     }
 
 }

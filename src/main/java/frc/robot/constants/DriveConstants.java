@@ -29,8 +29,6 @@ public class DriveConstants {
         new Translation2d(0.3556 - 0.644, -0.3556 + 0.063) //back right
     );
 
-    public static final double SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO = 6.25;
-
     public static final int FRONT_LEFT_MODULE_INDEX = 0;
     public static final int FRONT_RIGHT_MODULE_INDEX = 1;
     public static final int BACK_LEFT_MODULE_INDEX = 2;
@@ -49,4 +47,9 @@ public class DriveConstants {
     public static final int FRONT_LEFT_ENCODER_ID = 2;
     public static final int BACK_RIGHT_ENCODER_ID = 4;
     public static final int BACK_LEFT_ENCODER_ID = 0;
+
+    public static final double FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET = 0.0;
+    public static final double FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.0;
+    public static final double BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET = 0.0;
+    public static final double BACK_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.0;
 }
