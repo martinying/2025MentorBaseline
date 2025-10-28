@@ -48,8 +48,8 @@ public class DriveConstants {
     public static final int BACK_RIGHT_ENCODER_ID = 4;
     public static final int BACK_LEFT_ENCODER_ID = 0;
 
-    public static final double FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET = 0.0;
-    public static final double FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.0;
-    public static final double BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET = 0.0;
-    public static final double BACK_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.0;
+    public static final double FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET = 1.02;
+    public static final double FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET = 5.334;
+    public static final double BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET = 3.962;
+    public static final double BACK_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.257;
 }

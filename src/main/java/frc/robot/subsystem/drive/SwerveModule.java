@@ -20,6 +20,9 @@ import frc.robot.constants.DriveConstants;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class SwerveModule {
 
     @AutoLog
@@ -200,16 +203,27 @@ public class SwerveModule {
         double desiredMotorRotationsPerSec = wheelRotationsPerSec*DriveConstants.SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO;
 
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
-        PIDController turnPIDController = new PIDController(1, 0, 0);
+        PIDController turnPIDController = new PIDController(0.1, 0, 0);
 
         Logger.recordOutput("SwerveDrive/WheelDiameterInMeters",DriveConstants.WHEEL_DIAMETER_IN_METERS);
         Logger.recordOutput(loggerKeyPrefix+"wheelRotationsPerSec",wheelRotationsPerSec);
         Logger.recordOutput(loggerKeyPrefix+"desiredMotorRotationsPerSec",desiredMotorRotationsPerSec);
         Logger.recordOutput(loggerKeyPrefix+"desiredAngleOfTheWheel", desiredAngleOfTheWheel);
 
-        turnPIDController.calculate(absoluteEncoder.get(), desiredAngleOfTheWheel.getDegrees());
+        double absEncPos = this.getAbsoluteEncoderPosition();
+        double calculatedPidValue = turnPIDController.calculate(absEncPos, desiredAngleOfTheWheel.getDegrees());
+
+        Logger.recordOutput(loggerKeyPrefix+"Pid/errorDerivative", turnPIDController.getErrorDerivative());
+        Logger.recordOutput(loggerKeyPrefix+"Pid/error", turnPIDController.getError());
+        Logger.recordOutput(loggerKeyPrefix+"Pid/accumulatedError", turnPIDController.getAccumulatedError());
+        Logger.recordOutput(loggerKeyPrefix+"Pid/errorTolerance", turnPIDController.getErrorTolerance());
+        Logger.recordOutput(loggerKeyPrefix+"Pid/errorDerivativeTolerance", turnPIDController.getErrorDerivativeTolerance());
+        Logger.recordOutput(loggerKeyPrefix+"Pid/iZone", turnPIDController.getIZone());
+        Logger.recordOutput(loggerKeyPrefix+"Pid/calculatedPidValue", calculatedPidValue);
+        Logger.recordOutput(loggerKeyPrefix+"Pid/absoluteEncoderPosition", absEncPos);
+
         turnMotorController.setControl(
-                turnMotorControllerInput.withOutput(0));
+                turnMotorControllerInput.withOutput(calculatedPidValue));
 
         driveMotorController.setControl(driveVelocityInput.withVelocity(0));
      }
@@ -248,6 +262,7 @@ public class SwerveModule {
         inputs.drivePidReferenceSlope = drivePidReferenceSlope.getValueAsDouble();
         
         //this is the module's angle measured from the motor controller's onboard relative encoder
+        //we may not need this value since it's confusing
         inputs.turnMotorControllerPosition=Rotation2d.fromRotations(turnPosition.getValueAsDouble());
         inputs.turnMotorAngularAcceleration = turnAcceleration.getValueAsDouble();
         inputs.turnMotorVelocityRadPerSec = Units.rotationsToRadians(turnAngularVelocity.getValueAsDouble());
@@ -258,10 +273,17 @@ public class SwerveModule {
         inputs.turnSupplyVoltage = turnSupplyVoltage.getValueAsDouble();
         inputs.turnTorqueCurrent = turnTorqueCurrent.getValueAsDouble();
 
-        inputs.absoluteEncoderPosition = new Rotation2d(absoluteEncoder.get());
+        inputs.absoluteEncoderPosition = new Rotation2d(this.getAbsoluteEncoderPosition());
     }
 
     public SwerveModuleIOInputsAutoLogged getInputs() {
         return inputs;
+    }
+
+    private double getAbsoluteEncoderPosition() {
+//        BigDecimal bd = new BigDecimal(Double.toString(absoluteEncoder.get()-absoluteEncoderOffset));
+//        bd = bd.setScale(3, RoundingMode.FLOOR);
+//        return bd.doubleValue();
+        return absoluteEncoder.get()-absoluteEncoderOffset;
     }
 }
