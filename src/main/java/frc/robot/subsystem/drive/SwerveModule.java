@@ -20,9 +20,6 @@ import frc.robot.constants.DriveConstants;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 public class SwerveModule {
 
     @AutoLog
@@ -47,7 +44,7 @@ public class SwerveModule {
         public double drivePidReference = 0.0;
         public double drivePidReferenceSlope = 0.0;
 
-        public Rotation2d turnMotorControllerPosition = new Rotation2d();
+        public Rotation2d turnMotorControllerRelativeEncoderPosition = new Rotation2d();
         public double turnMotorVelocityRadPerSec = 0.0;
         public double turnMotorAngularAcceleration = 0.0;
         public double turnBridgeOutput = 0.0;
@@ -96,7 +93,7 @@ public class SwerveModule {
 
     // Inputs from turn motor
     private final StatusSignal<AngularVelocity> turnAngularVelocity;
-    private final StatusSignal<Angle> turnPosition;
+    private final StatusSignal<Angle> turnRelativeEncoderPosition;
     private final StatusSignal<AngularAcceleration> turnAcceleration;
     //this is the electrical output from the motor controller to the motor
     private final StatusSignal<BridgeOutputValue> turnBridgeOutput;
@@ -133,7 +130,7 @@ public class SwerveModule {
 
         turnMotorController = new TalonFX(turnDeviceId);
         //turnPositionInput = new PositionVoltage(absoluteEncoder.get()); //set position to what absolute encoder indicates
-        turnPosition = turnMotorController.getPosition();
+        turnRelativeEncoderPosition = turnMotorController.getPosition();
         turnAngularVelocity = turnMotorController.getVelocity();
         turnAcceleration = turnMotorController.getAcceleration();
         turnBridgeOutput = turnMotorController.getBridgeOutput();
@@ -205,10 +202,9 @@ public class SwerveModule {
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
         PIDController turnPIDController = new PIDController(0.1, 0, 0);
 
-        Logger.recordOutput("SwerveDrive/WheelDiameterInMeters",DriveConstants.WHEEL_DIAMETER_IN_METERS);
-        Logger.recordOutput(loggerKeyPrefix+"wheelRotationsPerSec",wheelRotationsPerSec);
-        Logger.recordOutput(loggerKeyPrefix+"desiredMotorRotationsPerSec",desiredMotorRotationsPerSec);
-        Logger.recordOutput(loggerKeyPrefix+"desiredAngleOfTheWheel", desiredAngleOfTheWheel);
+        Logger.recordOutput(loggerKeyPrefix+"drive/wheelRotationsPerSec",wheelRotationsPerSec);
+        Logger.recordOutput(loggerKeyPrefix+"drive/commandedMotorRotationsPerSec",desiredMotorRotationsPerSec);
+        Logger.recordOutput(loggerKeyPrefix+"turn/commandedAngleOfTheWheel", desiredAngleOfTheWheel);
 
         double absEncPos = this.getAbsoluteEncoderPosition();
         double calculatedPidValue = turnPIDController.calculate(absEncPos, desiredAngleOfTheWheel.getDegrees());
@@ -220,7 +216,7 @@ public class SwerveModule {
         Logger.recordOutput(loggerKeyPrefix+"Pid/errorDerivativeTolerance", turnPIDController.getErrorDerivativeTolerance());
         Logger.recordOutput(loggerKeyPrefix+"Pid/iZone", turnPIDController.getIZone());
         Logger.recordOutput(loggerKeyPrefix+"Pid/calculatedPidValue", calculatedPidValue);
-        Logger.recordOutput(loggerKeyPrefix+"Pid/absoluteEncoderPosition", absEncPos);
+        Logger.recordOutput(loggerKeyPrefix+"turn/absoluteEncoderPosition", absEncPos);
 
         turnMotorController.setControl(
                 turnMotorControllerInput.withOutput(calculatedPidValue));
@@ -237,7 +233,7 @@ public class SwerveModule {
                 driveTorqueCurrent, drivePidDerivativeOutput, drivePidIntegralOutput,
                 drivePidError, drivePidOutput, drivePidProportionalOutput,
                 drivePidReference, drivePidReferenceSlope,
-                turnPosition, turnAngularVelocity, turnAcceleration,
+                turnRelativeEncoderPosition, turnAngularVelocity, turnAcceleration,
                 turnBridgeOutput, turnDutyCycle, turnVoltage, turnSupplyCurrent,
                 turnSupplyVoltage, turnTorqueCurrent);
 
@@ -263,7 +259,7 @@ public class SwerveModule {
         
         //this is the module's angle measured from the motor controller's onboard relative encoder
         //we may not need this value since it's confusing
-        inputs.turnMotorControllerPosition=Rotation2d.fromRotations(turnPosition.getValueAsDouble());
+        inputs.turnMotorControllerRelativeEncoderPosition =Rotation2d.fromRotations(turnRelativeEncoderPosition.getValueAsDouble());
         inputs.turnMotorAngularAcceleration = turnAcceleration.getValueAsDouble();
         inputs.turnMotorVelocityRadPerSec = Units.rotationsToRadians(turnAngularVelocity.getValueAsDouble());
         inputs.turnBridgeOutput = turnBridgeOutput.getValueAsDouble();

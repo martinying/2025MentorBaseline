@@ -22,7 +22,7 @@ public class SwerveDrive extends SubsystemBase {
         swerveModules[DriveConstants.BACK_RIGHT_MODULE_INDEX] = new SwerveModule(DriveConstants.BACK_RIGHT_KRAKEN_ID,DriveConstants.BACK_RIGHT_FALCON_ID,DriveConstants.BACK_RIGHT_ENCODER_ID,DriveConstants.BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET);
     }
     
-    @AutoLogOutput(key = "SwerveDrive/measuredAngle")
+    @AutoLogOutput(key = "SwerveDrive/measuredIMUAngle")
     public Rotation2d getMeasuredAngle() {
         return m_imu.getRotation2d();
     }

@@ -29,8 +29,8 @@ public class SwerveModuleIOInputsAutoLogged extends SwerveModuleIOInputs impleme
         table.put("drive/Pid/Reference", drivePidReference);
         table.put("drive/Pid/ReferenceSlope", drivePidReferenceSlope);
         
-        table.put("turn/MotorControllerPosition", turnMotorControllerPosition);
-        table.put("absoluteEncoderPosition", absoluteEncoderPosition);
+        table.put("turn/MotorControllerRelativeEncoderPosition", turnMotorControllerRelativeEncoderPosition);
+        table.put("turn/absoluteEncoderPosition", absoluteEncoderPosition);
         table.put("turn/MotorVelocityRadPerSec", turnMotorVelocityRadPerSec);
         table.put("turn/MotorAngularAcceleration", turnMotorAngularAcceleration);
         table.put("turn/BridgeOutput", turnBridgeOutput);
@@ -63,8 +63,8 @@ public class SwerveModuleIOInputsAutoLogged extends SwerveModuleIOInputs impleme
         drivePidReference = table.get("drive/Pid/Reference", drivePidReference);
         drivePidReferenceSlope = table.get("drive/Pid/ReferenceSlope", drivePidReferenceSlope);
 
-        turnMotorControllerPosition = table.get("turn/MotorControllerPosition", turnMotorControllerPosition);
-        absoluteEncoderPosition = table.get("absoluteEncoderPosition", absoluteEncoderPosition);
+        turnMotorControllerRelativeEncoderPosition = table.get("turn/MotorControllerRelativeEncoderPosition", turnMotorControllerRelativeEncoderPosition);
+        absoluteEncoderPosition = table.get("turn/absoluteEncoderPosition", absoluteEncoderPosition);
         turnMotorVelocityRadPerSec = table.get("turn/MotorVelocityRadPerSec", turnMotorVelocityRadPerSec);
         turnMotorAngularAcceleration = table.get("turn/MotorAngularAcceleration", turnMotorAngularAcceleration);
         turnBridgeOutput = table.get("turn/BridgeOutput", turnBridgeOutput);
