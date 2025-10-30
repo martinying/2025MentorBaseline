@@ -4,6 +4,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -15,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.constants.DriveConstants;
 import org.littletonrobotics.junction.AutoLog;
@@ -146,12 +148,19 @@ public class SwerveModule {
     }
 
     private void initDriveControllerPID(TalonFX driveCTalonFX) {
-        Slot0Configs config = new Slot0Configs();
-        config.kP = 2.4; // An error of 1 rotation results in 2.4 V output
-        config.kI = 0; // no output for integrated error
-        config.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
+        Slot0Configs slot0Configs = new Slot0Configs();
+        slot0Configs.kP = 2.4; // An error of 1 rotation results in 2.4 V output
+        slot0Configs.kI = 0; // no output for integrated error
+        slot0Configs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
 
-        driveCTalonFX.getConfigurator().apply(config);
+        driveCTalonFX.getConfigurator().apply(slot0Configs);
+
+        Slot1Configs slot1Configs = new Slot1Configs();
+        slot1Configs.kP = 0.1; // An error of 1 rotation results in 2.4 V output
+        slot1Configs.kI = 0; // no output for integrated error
+        slot1Configs.kD = 0.01; // A velocity of 1 rps results in 0.1 V output
+
+        driveCTalonFX.getConfigurator().apply(slot1Configs);
     }
 
     private void initDriveControllerMotionMagic(TalonFX driveCTalonFX) {
@@ -177,7 +186,6 @@ public class SwerveModule {
     }
 
      public void setModuleState(SwerveModuleState desiredSwerveModuleStates, int moduleIndex) {
-
         String loggerKeyPrefix = "SwerveModule/";
         switch ( moduleIndex) {
             case DriveConstants.FRONT_LEFT_MODULE_INDEX:
@@ -207,22 +215,32 @@ public class SwerveModule {
         Logger.recordOutput(loggerKeyPrefix+"drive/commandedMotorRotationsPerSec",desiredMotorRotationsPerSec);
         Logger.recordOutput(loggerKeyPrefix+"turn/commandedAngleOfTheWheel", desiredAngleOfTheWheel);
 
+        int driveMotorControllerSlotNumber = 0;
+        if(DriverStation.isTest()) {
+            turnPIDController.setP(0.01);
+            driveMotorControllerSlotNumber = 1;
+        } else {
+            turnPIDController.setP(0.1);
+            //the default slot 0 is used
+        }
+
         double absEncPos = this.getAbsoluteEncoderPosition();
         double calculatedPidValue = turnPIDController.calculate(absEncPos, desiredAngleOfTheWheel.getDegrees());
 
-        Logger.recordOutput(loggerKeyPrefix+"Pid/errorDerivative", turnPIDController.getErrorDerivative());
-        Logger.recordOutput(loggerKeyPrefix+"Pid/error", turnPIDController.getError());
-        Logger.recordOutput(loggerKeyPrefix+"Pid/accumulatedError", turnPIDController.getAccumulatedError());
-        Logger.recordOutput(loggerKeyPrefix+"Pid/errorTolerance", turnPIDController.getErrorTolerance());
-        Logger.recordOutput(loggerKeyPrefix+"Pid/errorDerivativeTolerance", turnPIDController.getErrorDerivativeTolerance());
-        Logger.recordOutput(loggerKeyPrefix+"Pid/iZone", turnPIDController.getIZone());
-        Logger.recordOutput(loggerKeyPrefix+"Pid/calculatedPidValue", calculatedPidValue);
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/errorDerivative", turnPIDController.getErrorDerivative());
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/error", turnPIDController.getError());
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/accumulatedError", turnPIDController.getAccumulatedError());
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/errorTolerance", turnPIDController.getErrorTolerance());
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/errorDerivativeTolerance", turnPIDController.getErrorDerivativeTolerance());
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/iZone", turnPIDController.getIZone());
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/calculatedPidValue", calculatedPidValue);
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/kP", turnPIDController.getP());
         Logger.recordOutput(loggerKeyPrefix+"turn/absoluteEncoderPosition", absEncPos);
 
         turnMotorController.setControl(
                 turnMotorControllerInput.withOutput(calculatedPidValue));
 
-        driveMotorController.setControl(driveVelocityInput.withVelocity(0));
+        driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(0));
      }
 
     public void updateInputs() {
