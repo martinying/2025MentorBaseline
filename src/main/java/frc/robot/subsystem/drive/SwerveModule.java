@@ -103,6 +103,8 @@ public class SwerveModule {
     private final StatusSignal<Voltage> turnSupplyVoltage;
     private final StatusSignal<Current> turnTorqueCurrent;
 
+    PIDController turnPIDController = new PIDController(0.1, 0, 0);
+
     public SwerveModule(int driveDeviceId, int turnDeviceId, int absoluteEncoderPort, double absoluteEncoderOffset) {
         absoluteEncoder = new DutyCycleEncoder(new DigitalInput(absoluteEncoderPort), 2*Math.PI, 0);
         this.absoluteEncoderOffset = absoluteEncoderOffset;
@@ -200,7 +202,6 @@ public class SwerveModule {
         double desiredMotorRotationsPerSec = wheelRotationsPerSec*DriveConstants.SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO;
 
         Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
-        PIDController turnPIDController = new PIDController(0.1, 0, 0);
 
         Logger.recordOutput(loggerKeyPrefix+"drive/wheelRotationsPerSec",wheelRotationsPerSec);
         Logger.recordOutput(loggerKeyPrefix+"drive/commandedMotorRotationsPerSec",desiredMotorRotationsPerSec);
