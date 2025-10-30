@@ -240,7 +240,7 @@ public class SwerveModule {
         turnMotorController.setControl(
                 turnMotorControllerInput.withOutput(calculatedPidValue));
 
-        driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(desiredMotorRotationsPerSec));
+        driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(0));
      }
 
     public void updateInputs() {
