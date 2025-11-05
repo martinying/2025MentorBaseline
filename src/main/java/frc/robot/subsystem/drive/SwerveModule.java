@@ -233,8 +233,8 @@ public class SwerveModule {
         turnMotorController.setControl(
                 turnMotorControllerInput.withOutput(getTurnMotorCalculatedPidValue(commandedSwerveModuleStates)));
 
-        driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(0));
-        //driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(commandedMotorRotationsPerSec));
+        //driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(0));
+        driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(commandedMotorRotationsPerSec));
     }
 
     private double getTurnMotorCalculatedPidValue(SwerveModuleState commandedSwerveModuleStates) {
