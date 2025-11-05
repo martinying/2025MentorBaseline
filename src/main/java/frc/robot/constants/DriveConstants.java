@@ -12,7 +12,7 @@ public class DriveConstants {
 
     public static final int IMU_CAN_ID = 0; //CAN
 
-    public static final double MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE = 5;
+    public static final double MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE = 2;
 
     //GEAR RATIO IS PULLED FROM SITE BELOW
     //https://www.swervedrivespecialties.com/products/mk4i-swerve-module
