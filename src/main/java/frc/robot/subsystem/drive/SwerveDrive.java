@@ -34,16 +34,16 @@ public class SwerveDrive extends SubsystemBase {
             swerveModules[counter].updateInputs();
             switch ( counter ) {
                 case DriveConstants.FRONT_LEFT_MODULE_INDEX:
-                    Logger.processInputs("SwerveDrive/ModuleInput/FrontLeft",swerveModules[counter].getInputs());
+                    Logger.processInputs("ReplayInputs/SwerveModule//FrontLeft",swerveModules[counter].getInputs());
                     break;
                 case DriveConstants.FRONT_RIGHT_MODULE_INDEX:
-                    Logger.processInputs("SwerveDrive/ModuleInput/FrontRight",swerveModules[counter].getInputs());
+                    Logger.processInputs("ReplayInputs/SwerveModule//FrontRight",swerveModules[counter].getInputs());
                     break;
                 case DriveConstants.BACK_LEFT_MODULE_INDEX:
-                    Logger.processInputs("SwerveDrive/ModuleInput/BackLeft",swerveModules[counter].getInputs());
+                    Logger.processInputs("ReplayInputs/SwerveModule//BackLeft",swerveModules[counter].getInputs());
                     break;
                 case DriveConstants.BACK_RIGHT_MODULE_INDEX:
-                    Logger.processInputs("SwerveDrive/ModuleInput/BackRight",swerveModules[counter].getInputs());
+                    Logger.processInputs("ReplayInputs/SwerveModule//BackRight",swerveModules[counter].getInputs());
                     break;
             }
         }

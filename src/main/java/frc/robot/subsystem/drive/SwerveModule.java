@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.BridgeOutputValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -56,12 +57,15 @@ public class SwerveModule {
         public double turnSupplyVoltage = 0.0;
         public double turnTorqueCurrent = 0.0;
 
-        public Rotation2d absoluteEncoderPosition = new Rotation2d();
+        public double absoluteEncoderDutyCyclePosition = 0.0;
+        public double absoluteEncoderPositionInDegrees = 0.0;
+        public double absoluteEncoderPositionInRadians = 0.0;
     }
 
     private final SwerveModuleIOInputsAutoLogged inputs = new SwerveModuleIOInputsAutoLogged();
 
     private final DutyCycleEncoder absoluteEncoder;
+    //The offset is not in terms or radians or degrees, it should be less than the encoder max value of 1
     private final double absoluteEncoderOffset;
 
     private final TalonFX driveMotorController;
@@ -108,7 +112,8 @@ public class SwerveModule {
     PIDController turnPIDController = new PIDController(0.1, 0, 0);
 
     public SwerveModule(int driveDeviceId, int turnDeviceId, int absoluteEncoderPort, double absoluteEncoderOffset) {
-        absoluteEncoder = new DutyCycleEncoder(new DigitalInput(absoluteEncoderPort), 2*Math.PI, 0);
+        absoluteEncoder = new DutyCycleEncoder(new DigitalInput(absoluteEncoderPort));
+        //The offset is not in terms or radians or degrees, it should be less than the encoder max value of 1
         this.absoluteEncoderOffset = absoluteEncoderOffset;
 
         driveMotorController = new TalonFX(driveDeviceId);
@@ -133,7 +138,6 @@ public class SwerveModule {
         drivePidReferenceSlope = driveMotorController.getClosedLoopReferenceSlope();
 
         turnMotorController = new TalonFX(turnDeviceId);
-        //turnPositionInput = new PositionVoltage(absoluteEncoder.get()); //set position to what absolute encoder indicates
         turnRelativeEncoderPosition = turnMotorController.getPosition();
         turnAngularVelocity = turnMotorController.getVelocity();
         turnAcceleration = turnMotorController.getAcceleration();
@@ -185,7 +189,61 @@ public class SwerveModule {
 
     }
 
-     public void setModuleState(SwerveModuleState desiredSwerveModuleStates, int moduleIndex) {
+    public void setModuleState(SwerveModuleState commandedSwerveModuleStates, int moduleIndex) {
+        //to work with the most current data, get the measurements again and log them before using them in this method
+        this.updateInputs();
+        String proccessInputsKey = "ReplayInputs/SwerveModule/";
+        switch ( moduleIndex ) {
+            case DriveConstants.FRONT_LEFT_MODULE_INDEX:
+                proccessInputsKey += "FrontLeft/";
+                break;
+            case DriveConstants.FRONT_RIGHT_MODULE_INDEX:
+                proccessInputsKey += "FrontRight/";
+                break;
+            case DriveConstants.BACK_LEFT_MODULE_INDEX:
+                proccessInputsKey += "BackLeft/";
+                break;
+            case DriveConstants.BACK_RIGHT_MODULE_INDEX:
+                proccessInputsKey += "BackRight/";
+                break;
+        }
+        Logger.processInputs(proccessInputsKey,getInputs());//log updated measured values
+
+        //figures out if it only needs to do a smaller angle change and run the motor in the reverse direction
+        commandedSwerveModuleStates.optimize(new Rotation2d(inputs.absoluteEncoderPositionInRadians));
+
+        //DRIVE MOTOR CALCULATIONS
+        //omega (angular velocity in radians per second) = velocity/radius
+        double wheelRotationsPerSec = commandedSwerveModuleStates.speedMetersPerSecond/(DriveConstants.WHEEL_DIAMETER_IN_METERS*Math.PI);
+        double commandedMotorRotationsPerSec = wheelRotationsPerSec*DriveConstants.SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO;
+
+        //determine which drive motor pid to use, test mode vs. competition mode
+        int driveMotorControllerSlotNumber = 0;
+        if(DriverStation.isTest()) {//set drive and turn pid
+            turnPIDController.setP(0.01);
+            driveMotorControllerSlotNumber = 1;
+        } else {
+            turnPIDController.setP(0.1);
+            //the default slot 0 is used for drive pid
+        }
+
+        //log module information
+        logModuleState(moduleIndex, commandedMotorRotationsPerSec, commandedSwerveModuleStates);
+
+        turnMotorController.setControl(
+                turnMotorControllerInput.withOutput(getTurnMotorCalculatedPidValue(commandedSwerveModuleStates)));
+
+        driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(0));
+        //driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(commandedMotorRotationsPerSec));
+    }
+
+    private double getTurnMotorCalculatedPidValue(SwerveModuleState commandedSwerveModuleStates) {
+        //the commandedSwerveModuleStates.angle is in the range of -Pi to Pi
+        //angleModulus will convert 0 to 2Pi to -Pi to Pi
+        return turnPIDController.calculate(MathUtil.angleModulus(inputs.absoluteEncoderPositionInRadians), commandedSwerveModuleStates.angle.getRadians());
+    }
+
+    private void logModuleState(int moduleIndex, double commandedMotorRotationsPerSec, SwerveModuleState commandedSwerveModuleState) {
         String loggerKeyPrefix = "SwerveModule/";
         switch ( moduleIndex) {
             case DriveConstants.FRONT_LEFT_MODULE_INDEX:
@@ -202,46 +260,29 @@ public class SwerveModule {
                 break;
         }
 
-        //figures out if it only needs to do a smaller angle change and run the motor in the reverse direction
-        desiredSwerveModuleStates.optimize(inputs.absoluteEncoderPosition);
+        //log absolute encoder information
+        Logger.recordOutput(loggerKeyPrefix+"/absoluteEncoder/dutyCyclePosition", inputs.absoluteEncoderDutyCyclePosition); //0 to 1
+        Logger.recordOutput(loggerKeyPrefix+"/absoluteEncoder/absoluteEncoderDutyCycleOffset", absoluteEncoderOffset);
+        Logger.recordOutput(loggerKeyPrefix+"/absoluteEncoder/absoluteEncoderPositionInDegrees", inputs.absoluteEncoderPositionInDegrees);
+        Logger.recordOutput(loggerKeyPrefix+"/absoluteEncoder/absoluteEncoderPositionInRadians", inputs.absoluteEncoderPositionInRadians);
+        Logger.recordOutput(loggerKeyPrefix+"/absoluteEncoder/encoderGet", absoluteEncoder.get());
+        Logger.recordOutput(loggerKeyPrefix+"/absoluteEncoder/offset", absoluteEncoderOffset);
 
-        //omega (angular velocity in radians per second) = velocity/radius
-        double wheelRotationsPerSec = desiredSwerveModuleStates.speedMetersPerSecond/(DriveConstants.WHEEL_DIAMETER_IN_METERS*Math.PI);
-        double desiredMotorRotationsPerSec = wheelRotationsPerSec*DriveConstants.SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO;
 
-        Rotation2d desiredAngleOfTheWheel = desiredSwerveModuleStates.angle;
+        //log drive motor information
+        Logger.recordOutput(loggerKeyPrefix+"drive/commandedMotorRotationsPerSec",commandedMotorRotationsPerSec);
 
-        Logger.recordOutput(loggerKeyPrefix+"drive/wheelRotationsPerSec",wheelRotationsPerSec);
-        Logger.recordOutput(loggerKeyPrefix+"drive/commandedMotorRotationsPerSec",desiredMotorRotationsPerSec);
-        Logger.recordOutput(loggerKeyPrefix+"turn/commandedAngleOfTheWheel", desiredAngleOfTheWheel);
-
-        int driveMotorControllerSlotNumber = 0;
-        if(DriverStation.isTest()) {
-            turnPIDController.setP(0.01);
-            driveMotorControllerSlotNumber = 1;
-        } else {
-            turnPIDController.setP(0.1);
-            //the default slot 0 is used
-        }
-
-        double absEncPos = this.getAbsoluteEncoderPosition();
-        double calculatedPidValue = turnPIDController.calculate(absEncPos, desiredAngleOfTheWheel.getDegrees());
-
+        //log turn motor information
+        Logger.recordOutput(loggerKeyPrefix+"turn/commandedAngleOfTheWheelInDegrees", commandedSwerveModuleState.angle);
         Logger.recordOutput(loggerKeyPrefix+"turn/Pid/errorDerivative", turnPIDController.getErrorDerivative());
         Logger.recordOutput(loggerKeyPrefix+"turn/Pid/error", turnPIDController.getError());
         Logger.recordOutput(loggerKeyPrefix+"turn/Pid/accumulatedError", turnPIDController.getAccumulatedError());
         Logger.recordOutput(loggerKeyPrefix+"turn/Pid/errorTolerance", turnPIDController.getErrorTolerance());
         Logger.recordOutput(loggerKeyPrefix+"turn/Pid/errorDerivativeTolerance", turnPIDController.getErrorDerivativeTolerance());
         Logger.recordOutput(loggerKeyPrefix+"turn/Pid/iZone", turnPIDController.getIZone());
-        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/calculatedPidValue", calculatedPidValue);
+        Logger.recordOutput(loggerKeyPrefix+"turn/Pid/calculatedPidValue", getTurnMotorCalculatedPidValue(commandedSwerveModuleState));
         Logger.recordOutput(loggerKeyPrefix+"turn/Pid/kP", turnPIDController.getP());
-        Logger.recordOutput(loggerKeyPrefix+"turn/absoluteEncoderPosition", absEncPos);
-
-        turnMotorController.setControl(
-                turnMotorControllerInput.withOutput(calculatedPidValue));
-
-        driveMotorController.setControl(driveVelocityInput.withSlot(driveMotorControllerSlotNumber).withVelocity(0));
-     }
+    }
 
     public void updateInputs() {
         BaseStatusSignal.refreshAll(
@@ -288,17 +329,16 @@ public class SwerveModule {
         inputs.turnSupplyVoltage = turnSupplyVoltage.getValueAsDouble();
         inputs.turnTorqueCurrent = turnTorqueCurrent.getValueAsDouble();
 
-        inputs.absoluteEncoderPosition = new Rotation2d(this.getAbsoluteEncoderPosition());
+        //get the absolute encoder position for both calculations to eliminate any drift between two separate calls
+        //the absolute encoder returns a value from 0-1
+        inputs.absoluteEncoderDutyCyclePosition = absoluteEncoder.get()-absoluteEncoderOffset;//handle offset
+        //to convert 0-1 to degrees, we multiply it by 360
+        inputs.absoluteEncoderPositionInDegrees = inputs.absoluteEncoderDutyCyclePosition*360;
+        //to convert 0-1 to radians, we multiply it by 2*PI
+        inputs.absoluteEncoderPositionInRadians = inputs.absoluteEncoderDutyCyclePosition*2*Math.PI;
     }
 
     public SwerveModuleIOInputsAutoLogged getInputs() {
         return inputs;
-    }
-
-    private double getAbsoluteEncoderPosition() {
-//        BigDecimal bd = new BigDecimal(Double.toString(absoluteEncoder.get()-absoluteEncoderOffset));
-//        bd = bd.setScale(3, RoundingMode.FLOOR);
-//        return bd.doubleValue();
-        return absoluteEncoder.get()-absoluteEncoderOffset;
     }
 }
