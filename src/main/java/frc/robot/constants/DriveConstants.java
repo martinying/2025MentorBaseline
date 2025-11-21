@@ -12,14 +12,12 @@ public class DriveConstants {
 
     public static final int IMU_CAN_ID = 0; //CAN
 
-    public static final double MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE = 2;
+    public static final double MAX_SPEED_METER_PER_SECONDS_DEFAULT_VALUE = 0.25;
 
     //GEAR RATIO IS PULLED FROM SITE BELOW
     //https://www.swervedrivespecialties.com/products/mk4i-swerve-module
     public static final double SWERVE_MODULE_DRIVE_MOTOR_GEAR_RATIO = 6.25;
     
-    public static final double WHEEL_RADIUS_DEFAULT_VALUE = 2;
-
     public static final double WHEEL_DIAMETER_IN_METERS = Units.inchesToMeters(4);
 
     public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
@@ -48,8 +46,8 @@ public class DriveConstants {
     public static final int BACK_RIGHT_ENCODER_ID = 4;
     public static final int BACK_LEFT_ENCODER_ID = 0;
 
-    public static final double FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET = 0.19305;
-    public static final double FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.86125;
-    public static final double BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET = 0.6341;
-    public static final double BACK_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.0335;
+    public static final double FRONT_RIGHT_ABSOLUTE_ENCODER_OFFSET = 0.172;
+    public static final double FRONT_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.854;
+    public static final double BACK_RIGHT_ABSOLUTE_ENCODER_OFFSET = 0.636;
+    public static final double BACK_LEFT_ABSOLUTE_ENCODER_OFFSET = 0.049;
 }
